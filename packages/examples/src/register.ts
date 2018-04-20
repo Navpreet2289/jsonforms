@@ -25,8 +25,9 @@
 import { JsonFormsElement } from '@jsonforms/webcomponent';
 import { ExampleDescription } from './example';
 import { jsonformsReducer, JsonFormsState, RankedTester } from '@jsonforms/core';
-import { combineReducers, createStore, Reducer } from 'redux';
+import { combineReducers, createStore, Reducer, applyMiddleware } from 'redux';
 import { i18nReducer, translateProps } from '@jsonforms/i18n';
+import logger from 'redux-logger';
 
 declare let exampleDivId;
 declare let viewDivId;
@@ -107,7 +108,8 @@ export const changeExample =
           transformProps: [translateProps],
           ...additionalInitState
         }
-      }
+      },
+      applyMiddleware(logger)
     );
 
     body.appendChild(jsonForms);

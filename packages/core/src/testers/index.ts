@@ -314,10 +314,11 @@ export const isArrayObjectControl = and(
     && schema.type === 'array'
     && !_.isEmpty(schema.items)
     && !Array.isArray(schema.items) // we don't care about tuples
-  ),
+  )
+  /*,
   schemaSubPathMatches('items', schema =>
     schema.type === 'object'
-  )
+  )*/
 );
 
 /**

@@ -387,24 +387,47 @@ export interface TableControlProps extends StatePropsOfTable, DispatchPropsOfTab
 
 }
 
+export const mapTypeToInstance = typedSchema => {
+  switch (typedSchema.type) {
+    case 'string':
+      if (typedSchema.format === 'date-time'
+        || typedSchema.format === 'date'
+        || typedSchema.format === 'time') {
+        return new Date();
+      }
+      return '';
+    case 'number':
+      return 0;
+    case 'boolean':
+      return false;
+    case 'array':
+      return [];
+    case 'null':
+      return null;
+    default:
+      return {};
+  }
+};
+
 /**
  * Map dispatch to table control props
  *
  * @param dispatch the store's dispatch method
  * @returns {DispatchPropsOfTable} dispatch props for a table control
  */
-export const mapDispatchToTableControlProps = (dispatch): DispatchPropsOfTable => ({
+export const mapDispatchToTableControlProps = (dispatch, ownProps): DispatchPropsOfTable => ({
   addItem: (path: string) => () => {
     dispatch(
       update(
         path,
         array => {
           if (array === undefined || array === null) {
-            return [{}];
+            return [];
           }
-
-          array.push({});
-
+          const schemaPath = ownProps.uischema.scope + '/items';
+          const resolvedSchema = Resolve.schema(ownProps.schema, schemaPath);
+          const newValue = mapTypeToInstance(resolvedSchema);
+          array.push(newValue);
           return array;
         }
       )
